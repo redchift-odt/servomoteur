@@ -1,0 +1,68 @@
+#include <Arduino.h>
+#include <ESP32Servo.h>
+#include <IRremote.h>
+
+Servo servo2;
+Servo servo3;
+Servo servo4; 
+
+const int irReceiverPin = 12;
+
+IRrecv irrecv(irReceiverPin);
+decode_results results;
+
+void setup() {
+  Serial.begin(9600);
+  servo2.attach(15);// Utilisez la broche appropriée pour le premier servomoteur
+  servo4.attach(2); // Utilisez la broche appropriée pour le deuxieme servomoteur
+
+  irrecv.enableIRIn(); // Activer le récepteur infrarouge
+}
+
+void loop() {
+  // Lire les signaux infrarouges
+  if (irrecv.decode(&results)) {
+    // Afficher la valeur du code infrarouge dans le moniteur série
+    Serial.print("IR Code Value: ");
+    Serial.println(results.value, HEX);
+
+    
+    if (results.value == 0xFFA857) {
+      Serial.println("Received: ijejrjsjejivj");
+      servo2.write(servo2.read() + 20);
+      
+    }
+    // Si le code correspond, retirer 20 degrés aux servomoteurs 2 
+    else if (results.value == 0xFFE01F) {
+      Serial.println("Received: jrsghurshgu");
+      servo2.write(servo2.read() - 20);
+      
+    }
+    // Si le code correspond, ajouter 20 degrés au servomoteur 4
+    else if (results.value == 0x98989) {
+      Serial.println("Received: 0x98989");
+      servo4.write(servo4.read() + 20);
+    }
+    // Si le code correspond, retirer 20 degrés au servomoteur 4
+    else if (results.value == 0x8947398) {
+      Serial.println("Received: 0x8947398");
+      servo4.write(servo4.read() - 20);
+    }
+    // Si le code correspond, ajouter 20 degrés au servomoteur 4
+    else if (results.value == 0xFF02FD) {
+      Serial.println("Received: 0x98989");
+      servo4.write(servo4.read() + 20);
+    }
+    // Si le code correspond, retirer 20 degrés au servomoteur 4
+    else if (results.value == 0xFF22DD) {
+      Serial.println("Received: 0x8947398");
+      servo4.write(servo4.read() - 20);
+    }
+
+    
+
+    irrecv.resume(); // Recevoir la prochaine valeur dans la loop
+  }
+
+  delay(15);
+}
